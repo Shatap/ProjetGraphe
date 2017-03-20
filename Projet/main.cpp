@@ -10,8 +10,8 @@
 using namespace std;
 
 
-const int LARGEUR = 1200;
-const int HAUTEUR = 800;
+const int LARGEUR = 1920;
+const int HAUTEUR = 1080;
 
 
 const float MAX_ATTRACTIVE = 100.*3;
@@ -22,7 +22,17 @@ const float GRAVITE = .01;
 
 
 void initialiserDessin(Graphe & g, unsigned int largeur, unsigned int hauteur){
+ std::cout<<"TAILLE DU SET"<<g.sommets().size()<<endl;
 
+ srand(time(NULL));
+
+ for(Sommet s : g.sommets())
+ {
+     float haut = rand()% HAUTEUR + 0;
+     float larg= rand()% LARGEUR +0;
+     Coord repos{larg,haut};
+     g.positionSommet(s,repos);
+ }
 }
 
 void initialiserIntelligementDessin(Graphe & g, unsigned int largeur, unsigned int hauteur){
@@ -31,17 +41,31 @@ void initialiserIntelligementDessin(Graphe & g, unsigned int largeur, unsigned i
 
 
 Coord calculerAttractions(const Graphe &g, Sommet v){
-    // TODO
-    return Coord();
+
+    Coord coord ;
+    for(Sommet s : g.voisins(v)){
+        coord = g.positionSommet(s);
+((coord/coord.norm()*((coord.norm()*coord.norm())/EDGE_LENGTH*EDGE_LENGTH)));
+    }
+    return coord;
 }
 
-Coord calculerRepulsions(const Graphe & g, Sommet v){
-    // TODO
-    return Coord();
+Coord calculerRepulsions(const Graphe & g, Sommet v)
+{
+    Coord coord;
+
+    for(Sommet s:g.voisins(v))
+    {
+        coord = g.positionSommet(s);
+            // A FINIR
+    }
+
+ return coord;
 }
 
 Coord calculerForces(const Graphe &g, Sommet v){
-    // TODO
+    Coord coord = calculerAttractions(g,v)+calculerRepulsions(g,v);
+         return coord;
     return Coord();
 }
 
