@@ -35,11 +35,6 @@ void initialiserDessin(Graphe & g, unsigned int largeur, unsigned int hauteur){
     }
 }
 
-void initialiserIntelligementDessin(Graphe & g, unsigned int largeur, unsigned int hauteur){
-    // TODO
-}
-
-
 Coord calculerAttractions(const Graphe &g, Sommet v){
 
     Coord attra ;
@@ -100,14 +95,25 @@ Coord calculerForces(const Graphe &g, Sommet v){
    return  coord = calculerAttractions(g,v)+calculerRepulsions(g,v)+calculerForceGravite(g,v,calculerBarycentre(g));
 
 }
+void initialiserIntelligementDessin(Graphe & g, unsigned int largeur, unsigned int hauteur){
+
+ initialiserDessin(g, largeur, hauteur);
+
+ for(Sommet s:g.voisins(s))
+     g.positionSommet(s,calculerForces(g,s));
+
+
+
+}
+
+
+
 
 
 
 
 void deplacer(Graphe &g, Sommet v, Coord deplacement){
 
-
-    Coord p =g.positionSommet(v);
 
     if(deplacement.norm()>MAX_DEPLACEMENT)
         deplacement = deplacement/deplacement.norm()*MAX_DEPLACEMENT;
@@ -118,7 +124,7 @@ void deplacer(Graphe &g, Sommet v, Coord deplacement){
 
 void dessinerGraphe(Graphe & g, Appli &a){
     // initialisation aléatoire
-    initialiserDessin(g, LARGEUR, HAUTEUR);
+
 
     // répéter autant de fois qu'il y a de sommets
     unsigned int nb_iterations = g.nbSommets();
