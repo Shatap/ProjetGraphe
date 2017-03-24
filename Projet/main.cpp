@@ -52,20 +52,20 @@ Coord calculerAttractions(const Graphe &g, Sommet v){
 
 Coord calculerRepulsions(const Graphe & g, Sommet v)
 {
-    Coord coord;
+   Coord Repulsion = g.positionSommet(v);
 
-    for(Sommet s:g.voisins(v))
-    {
-        coord = g.positionSommet(s);
-            // A FINIR
-    }
-
- return coord;
+   for (Sommet s : g.voisins(v))
+  {
+       Coord p = g.positionSommet(s) - g.positionSommet(v);
+      if (-MAX_REPULSIVE < p.norm() < MAX_REPULSIVE)
+           Repulsion += p / (EDGE_LENGTH * pow(p.norm(),3) );
+   }
+ return Repulsion;
 }
 
 Coord calculerForces(const Graphe &g, Sommet v){
     Coord coord = calculerAttractions(g,v)+calculerRepulsions(g,v);
-         return coord;
+        return coord;
     return Coord();
 }
 
