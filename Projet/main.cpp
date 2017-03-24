@@ -1,4 +1,4 @@
-    #include <iostream>
+#include <iostream>
 #include <deque>
 #include <algorithm>
 #include <SFML/Graphics.hpp>
@@ -28,8 +28,8 @@ void initialiserDessin(Graphe & g, unsigned int largeur, unsigned int hauteur){
 
     for(Sommet s : g.sommets())
     {
-        float haut = rand()% HAUTEUR + 0;
-        float larg= rand()% LARGEUR +0;
+        float haut = rand()% hauteur + 0;
+        float larg= rand()% largeur +0;
         Coord repos{larg,haut};
         g.positionSommet(s,repos);
     }
@@ -54,11 +54,11 @@ Coord calculerRepulsions(const Graphe & g, Sommet v)
     for (Sommet s : g.sommets())
     {
         repulsion=g.positionSommet(v)-g.positionSommet(s);
-     if(!(s==v))
-     {
-         repulsion= (repulsion*EDGE_LENGTH)/(repulsion.norm()*repulsion.norm()*repulsion.norm());
+        if(!(s==v))
+        {
+            repulsion= (repulsion*EDGE_LENGTH)/(repulsion.norm()*repulsion.norm()*repulsion.norm());
 
-     }
+        }
     }
 
     if(repulsion.norm()>MAX_REPULSIVE)
@@ -84,7 +84,7 @@ Coord calculerForceGravite(const Graphe &g, Sommet v, const Coord &barycentre){
 
     float n=barycentre.norm();
     Coord f = g.positionSommet(v)-barycentre;
-     Coord gravite = (f/n)*GRAVITE;
+    Coord gravite = (f/n)*GRAVITE;
 
 
     return gravite;
@@ -92,15 +92,22 @@ Coord calculerForceGravite(const Graphe &g, Sommet v, const Coord &barycentre){
 
 Coord calculerForces(const Graphe &g, Sommet v){
     Coord coord;
-   return  coord = calculerAttractions(g,v)+calculerRepulsions(g,v)+calculerForceGravite(g,v,calculerBarycentre(g));
+    return  coord = calculerAttractions(g,v)+calculerRepulsions(g,v)+calculerForceGravite(g,v,calculerBarycentre(g));
 
 }
 void initialiserIntelligementDessin(Graphe & g, unsigned int largeur, unsigned int hauteur){
 
- initialiserDessin(g, largeur, hauteur);
+    initialiserDessin(g, largeur, hauteur);
+    for(Sommet s :g.sommets())
+    {
+        g.positionSommet(s,calculerForces(g,s));
+        Coord pos = g.positionSommet(s);
 
- for(Sommet s:g.voisins(s))
-     g.positionSommet(s,calculerForces(g,s));
+        if(pos.norm()>hauteur)
+            g.positionSommet(s,calculerForces(g,s));
+
+
+    }
 
 
 
@@ -125,7 +132,7 @@ void deplacer(Graphe &g, Sommet v, Coord deplacement){
 void dessinerGraphe(Graphe & g, Appli &a){
     // initialisation aléatoire
 
-
+initialiserIntelligementDessin(g,LARGEUR,HAUTEUR);
     // répéter autant de fois qu'il y a de sommets
     unsigned int nb_iterations = g.nbSommets();
     for(unsigned int i = 0; i < nb_iterations; ++i){
