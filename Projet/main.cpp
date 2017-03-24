@@ -1,4 +1,4 @@
-#include <iostream>
+    #include <iostream>
 #include <deque>
 #include <algorithm>
 #include <SFML/Graphics.hpp>
@@ -22,17 +22,17 @@ const float GRAVITE = .01;
 
 
 void initialiserDessin(Graphe & g, unsigned int largeur, unsigned int hauteur){
- std::cout<<"TAILLE DU SET"<<g.sommets().size()<<endl;
+    std::cout<<"TAILLE DU SET"<<g.sommets().size()<<endl;
 
- srand(time(NULL));
+    srand(time(NULL));
 
- for(Sommet s : g.sommets())
- {
-     float haut = rand()% HAUTEUR + 0;
-     float larg= rand()% LARGEUR +0;
-     Coord repos{larg,haut};
-     g.positionSommet(s,repos);
- }
+    for(Sommet s : g.sommets())
+    {
+        float haut = rand()% HAUTEUR + 0;
+        float larg= rand()% LARGEUR +0;
+        Coord repos{larg,haut};
+        g.positionSommet(s,repos);
+    }
 }
 
 void initialiserIntelligementDessin(Graphe & g, unsigned int largeur, unsigned int hauteur){
@@ -42,46 +42,77 @@ void initialiserIntelligementDessin(Graphe & g, unsigned int largeur, unsigned i
 
 Coord calculerAttractions(const Graphe &g, Sommet v){
 
-    Coord coord ;
+    Coord attra ;
     for(Sommet s : g.voisins(v)){
-        coord = g.positionSommet(s);
-((coord/coord.norm()*((coord.norm()*coord.norm())/EDGE_LENGTH*EDGE_LENGTH)));
+        attra = g.positionSommet(s)-g.positionSommet(v);
+        attra= ((attra/attra.norm()*((attra.norm()*attra.norm())/EDGE_LENGTH*EDGE_LENGTH)));
     }
-    return coord;
+    if(attra.norm()>MAX_ATTRACTIVE)
+        attra=(attra/attra.norm())*MAX_ATTRACTIVE;
+    return attra;
 }
 
 Coord calculerRepulsions(const Graphe & g, Sommet v)
 {
-   Coord Repulsion = g.positionSommet(v);
 
-   for (Sommet s : g.voisins(v))
-  {
-       Coord p = g.positionSommet(s) - g.positionSommet(v);
-      if (-MAX_REPULSIVE < p.norm() < MAX_REPULSIVE)
-           Repulsion += p / (EDGE_LENGTH * pow(p.norm(),3) );
-   }
- return Repulsion;
+    Coord repulsion ;
+    for (Sommet s : g.sommets())
+    {
+        repulsion=g.positionSommet(v)-g.positionSommet(s);
+     if(!(s==v))
+     {
+         repulsion= (repulsion*EDGE_LENGTH)/(repulsion.norm()*repulsion.norm()*repulsion.norm());
+
+     }
+    }
+
+    if(repulsion.norm()>MAX_REPULSIVE)
+        repulsion=(repulsion/repulsion.norm())*MAX_REPULSIVE;
+    return repulsion;
 }
-
-Coord calculerForces(const Graphe &g, Sommet v){
-    Coord coord = calculerAttractions(g,v)+calculerRepulsions(g,v);
-        return coord;
-    return Coord();
-}
-
 
 Coord calculerBarycentre(const Graphe &g){
-    // TODO
-    return Coord();
+
+    Coord coord ;
+
+    for(auto  s:g.sommets())
+    {
+        coord+=g.positionSommet(s);
+
+    }
+
+
+    return coord/g.nbSommets();
 }
 
 Coord calculerForceGravite(const Graphe &g, Sommet v, const Coord &barycentre){
-    // TODO
-    return Coord();
+
+    float n=barycentre.norm();
+    Coord f = g.positionSommet(v)-barycentre;
+     Coord gravite = (f/n)*GRAVITE;
+
+
+    return gravite;
 }
 
+Coord calculerForces(const Graphe &g, Sommet v){
+    Coord coord;
+   return  coord = calculerAttractions(g,v)+calculerRepulsions(g,v)+calculerForceGravite(g,v,calculerBarycentre(g));
+
+}
+
+
+
+
 void deplacer(Graphe &g, Sommet v, Coord deplacement){
-    // TODO
+
+
+    Coord p =g.positionSommet(v);
+
+    if(deplacement.norm()>MAX_DEPLACEMENT)
+        deplacement = deplacement/deplacement.norm()*MAX_DEPLACEMENT;
+    g.positionSommet(v,g.positionSommet(v)+deplacement);
+
 }
 
 

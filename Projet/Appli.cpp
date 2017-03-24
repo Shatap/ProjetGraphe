@@ -14,7 +14,7 @@ using namespace sf;
  pour l'implémentation de Appli
 */
 
-const float Appli::RAYON          = 16.0;
+const float Appli::RAYON          = 4.0;
 const string Appli::FICHIER_FONT = "FreeSans.ttf";
 
 // ---------------------------------------
@@ -34,7 +34,7 @@ Appli::Appli(unsigned int largeur, unsigned int hauteur)
                         "Dessin de graphe",
                         sf::Style::Close
                         );
-    m_fenetre.setFramerateLimit(50);
+    m_fenetre.setFramerateLimit(120);
 
     m_font.loadFromFile(FICHIER_FONT);
     m_etiquette.setFont(m_font);
